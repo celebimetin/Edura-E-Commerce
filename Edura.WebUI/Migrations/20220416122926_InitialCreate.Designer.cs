@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Edura.WebUI.Migrations
 {
     [DbContext(typeof(EduraContext))]
-    [Migration("20220403162324_UpdateProductDetails")]
-    partial class UpdateProductDetails
+    [Migration("20220416122926_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

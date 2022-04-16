@@ -85,8 +85,8 @@ namespace Edura.WebUI.Repository.Concrete.EntityFramework
                 {
                     new ProductCategory(){Product=products[0], Category=categories[0]},
                     new ProductCategory(){Product=products[1], Category=categories[0]},
-                    new ProductCategory(){Product=products[2], Category=categories[2]},
-                    new ProductCategory(){Product=products[3], Category=categories[1]},
+                    new ProductCategory(){Product=products[2], Category=categories[1]},
+                    new ProductCategory(){Product=products[3], Category=categories[2]},
                 };
 
                 context.AddRange(productCategories);
