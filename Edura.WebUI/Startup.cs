@@ -44,6 +44,12 @@ namespace Edura.WebUI
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "products",
+                    template: "products/{category?}",
+                    defaults: new { controller = "product", action = "List" }
+                    );
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}"
                     );

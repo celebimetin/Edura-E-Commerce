@@ -8,6 +8,7 @@ namespace Edura.WebUI.Controllers
 {
     public class ProductController : Controller
     {
+        public int PageSize = 2;
         private IProductRepository _productRepository;
 
         public ProductController(IProductRepository productRepository)
@@ -33,6 +34,34 @@ namespace Edura.WebUI.Controllers
                     ProductAttributes = x.Attributes,
                     Categories = x.ProductCategories.Select(y => y.Category).ToList()
                 }).FirstOrDefault());
+        }
+
+        public IActionResult List(string category, int page = 1)
+        {
+            var products = _productRepository.GetAll();
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                products = products
+                    .Include(x => x.ProductCategories)
+                    .ThenInclude(x => x.Category)
+                    .Where(x => x.ProductCategories.Any(a => a.Category.CategoryName == category));
+            }
+
+            var count = products.Count();
+
+            products = products.Skip((page - 1) * PageSize).Take(PageSize);
+
+            return View(new ProductListModel()
+            {
+                Products = products,
+                PagingInfo = new PagingInfo()
+                {
+                    CurrentPage = page,
+                    ItemsPerPage = PageSize,
+                    TotalItems = count
+                }
+            });
         }
     }
 }
