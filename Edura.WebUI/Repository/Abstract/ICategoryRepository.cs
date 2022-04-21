@@ -8,5 +8,6 @@ namespace Edura.WebUI.Repository.Abstract
     public interface ICategoryRepository : IGenericRepository<Category>
     {
         IEnumerable<CategoryProductCauntModel> GetAllWithProductCaunt();
+        void RemoveFromCategory(int ProductId, int CategoryId);
     }
 }

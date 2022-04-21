@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using Edura.WebUI.Models;
 using Edura.WebUI.Repository.Abstract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Edura.WebUI.Controllers
 {
@@ -27,6 +27,7 @@ namespace Edura.WebUI.Controllers
             return View();
         }
 
+        [HttpGet]
         public IActionResult CatalogList()
         {
             var model = new CatalogListModel()
@@ -84,6 +85,56 @@ namespace Edura.WebUI.Controllers
                 return RedirectToAction("CatalogList");
             }
             return View(product);
+        }
+
+        [HttpGet]
+        public IActionResult EditCatagory(int id)
+        {
+            var entity = _categoryRepository.GetAll()
+                .Include(x => x.ProductCategories)
+                .ThenInclude(x => x.Product)
+                .Where(x => x.Id == id).Select(s => new AdminEditCategoryModel()
+                {
+                    CategoryId = s.Id,
+                    CategoryName = s.CategoryName,
+                    Products = s.ProductCategories.Select(a => new AdminEditCategoryProduct()
+                    {
+                        ProductId = a.ProductId,
+                        ProductName = a.Product.ProductName,
+                        Image = a.Product.Image,
+                        IsApproved = a.Product.IsApproved,
+                        IsFeatured = a.Product.IsFeatured,
+                        IsHome = a.Product.IsHome
+                    }).ToList()
+                }).FirstOrDefault();
+
+            return View(entity);
+        }
+
+        [HttpPost]
+        public IActionResult EditCatagory(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryRepository.Edit(category);
+                _categoryRepository.Save();
+
+                return RedirectToAction("CatalogList");
+            }
+            return View("Error");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveFromCategory(int ProductId, int CategoryId)
+        {
+            if (ModelState.IsValid)
+            {
+                _categoryRepository.RemoveFromCategory(ProductId, CategoryId);
+                _categoryRepository.Save();
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }
